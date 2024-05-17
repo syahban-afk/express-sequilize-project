@@ -1,27 +1,28 @@
+const users = require("./users");
+
 module.exports = (sequelize, DataTypes) => {
-    const users = sequelize.define('users', {
+    const tasks = sequelize.define('tasks', {
         id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
             type: DataTypes.INTEGER
         },
-        name: {
+        title: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        email: {
+        description: {
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true,
-                notEmpty: true
-            }
+            allowNull: false
         },
-        password: {
-            type: DataTypes.STRING,
+        userId: {
+            type: DataTypes.INTEGER,
             allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id'
+            }
         },
         createdAt: {
             allowNull: false,
@@ -32,7 +33,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE
         }
     }, {
-        tableName: 'users',
+        tableName: 'tasks',
     });
-    return users;
+    tasks.associate = (models) => {
+        tasks.belongsTo(models.users, {
+            foreignKey: 'userId'
+        });
+    }
+    return tasks;
 }
